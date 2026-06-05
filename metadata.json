@@ -1,6 +1,6 @@
 {
-  "name": "Générateur Statistique EuroMillions",
-  "description": "Un dashboard d'analyse statistique et de génération pondérée de combinaisons pour l'EuroMillions basé sur l'historique et des matrices de co-occurrence.",
+  "name": "EuroMaths",
+  "description": "Plateforme d'analyse stochastique avancée pour l'EuroMillions avec matrice de co-occurrence 50x50, topologie orbitale 3D et backtesting de précision.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
