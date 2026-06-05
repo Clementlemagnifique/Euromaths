@@ -9,6 +9,7 @@ import { TRANSLATIONS } from "../utils/translations";
 import { motion, AnimatePresence } from "motion/react";
 import { Sliders, Sparkles, Cpu, ChevronDown, ChevronUp, RefreshCw, BarChart2, Star, CloudLightning, Check, AlertCircle } from "lucide-react";
 import MathVortexAnimation from "./MathVortexAnimation";
+import Expert3DOrbitCanvas from "./Expert3DOrbitCanvas";
 
 export default function CombinationGenerator() {
   const { 
@@ -505,6 +506,13 @@ export default function CombinationGenerator() {
         </AnimatePresence>
 
       </div>
+
+      {/* Rendu dynamique de la Topologie Céleste 3D en Mode Expert */}
+      {modeExpert && (
+        <div className="pt-2">
+          <Expert3DOrbitCanvas />
+        </div>
+      )}
 
       {/* Animation 3D de calcul stochastique innovant */}
       <AnimatePresence>

@@ -29,9 +29,7 @@ export default function Expert3DOrbitCanvas() {
   
   // Suivi de la souris pour faire pivoter la sphère interactivement
   const [isHovered, setIsHovered] = useState<boolean>(false);
-  const mousePosRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
-
-  // Pré-calculer les positions sphériques uniformes des 50 numéros (répartition de Fibonacci sur la sphère)
+  const mousePosRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });  // Pré-calculer les positions sphériques uniformes des 50 numéros (répartition de Fibonacci sur la sphère)
   const baseNodes3D = useMemo(() => {
     const nodes: Node3D[] = [];
     const simulatedSet = new Set(lastCombinaison?.numeros || []);
@@ -49,7 +47,7 @@ export default function Expert3DOrbitCanvas() {
       const phi = Math.acos(1 - 2 * (i + 0.5) / 50);
       const theta = Math.PI * (1 + 5 ** 0.5) * (i + 0.5);
       
-      const r = 125; // Rayon de la sphère
+      const r = 155; // Rayon de la sphère plus grand (précédemment 125)
       const x3d = r * Math.sin(phi) * Math.cos(theta);
       const y3d = r * Math.sin(phi) * Math.sin(theta);
       const z3d = r * Math.cos(phi);
@@ -83,8 +81,8 @@ export default function Expert3DOrbitCanvas() {
     if (!ctx) return;
 
     let animId: number;
-    let width = 360;
-    let height = 360;
+    let width = 440;
+    let height = 440;
 
     // Position instantanée des points
     const points = [...baseNodes3D.map(p => ({ ...p }))];
@@ -92,7 +90,7 @@ export default function Expert3DOrbitCanvas() {
     const handleResize = () => {
       const parent = canvas.parentElement;
       if (parent) {
-        const size = Math.min(parent.clientWidth - 20, 360);
+        const size = Math.min(parent.clientWidth - 10, 440);
         canvas.width = size;
         canvas.height = size;
         width = size;
@@ -111,18 +109,18 @@ export default function Expert3DOrbitCanvas() {
       ctx.fillRect(0, 0, width, height);
 
       // Dessiner un repère sphérique / grille orbitale de fond
-      ctx.strokeStyle = "rgba(59, 130, 246, 0.04)";
+      ctx.strokeStyle = "rgba(59, 130, 246, 0.05)";
       ctx.lineWidth = 1.5;
       
-      // Cercles de longitude/latitude célestes
+      // Cercles de longitude/latitude célestes avec rayon plus grand (155)
       ctx.beginPath();
-      ctx.arc(width / 2, height / 2, 125, 0, Math.PI * 2);
+      ctx.arc(width / 2, height / 2, 155, 0, Math.PI * 2);
       ctx.stroke();
       ctx.beginPath();
-      ctx.ellipse(width / 2, height / 2, 125, 45, 0, 0, Math.PI * 2);
+      ctx.ellipse(width / 2, height / 2, 155, 55, 0, 0, Math.PI * 2);
       ctx.stroke();
       ctx.beginPath();
-      ctx.ellipse(width / 2, height / 2, 45, 125, 0, 0, Math.PI * 2);
+      ctx.ellipse(width / 2, height / 2, 55, 155, 0, 0, Math.PI * 2);
       ctx.stroke();
 
       // Ajuster dynamiquement l'angle d'inertie de rotation automatique
@@ -155,7 +153,7 @@ export default function Expert3DOrbitCanvas() {
         p.z3d = z2;
 
         // Projection 2D perspective
-        const distanceCamera = 260;
+        const distanceCamera = 300;
         const factor = distanceCamera / (distanceCamera + z2); // Effet de z-depth
         
         p.x2d = width / 2 + x2 * factor;
@@ -177,14 +175,14 @@ export default function Expert3DOrbitCanvas() {
         ctx.closePath();
         
         // Halo lumineux de la constellation simulée
-        ctx.strokeStyle = "rgba(59, 130, 246, 0.4)";
+        ctx.strokeStyle = "rgba(59, 130, 246, 0.45)";
         ctx.lineWidth = 2.5;
         ctx.shadowColor = "#3b82f6";
-        ctx.shadowBlur = 10;
+        ctx.shadowBlur = 12;
         ctx.stroke();
         
         // Fond translucide de polygone
-        ctx.fillStyle = "rgba(30, 58, 138, 0.15)";
+        ctx.fillStyle = "rgba(30, 58, 138, 0.18)";
         ctx.shadowBlur = 0; // reset shadow
         ctx.fill();
       }
@@ -269,54 +267,65 @@ export default function Expert3DOrbitCanvas() {
   if (!modeExpert) return null;
 
   return (
-    <div className="bg-gradient-to-b from-slate-800 to-slate-900 border border-slate-700/80 rounded-2xl p-5 shadow-xl space-y-4 animate-slideDown" id="orbital-3d-visualizer">
+    <div className="bg-gradient-to-b from-slate-800 to-slate-900 border border-slate-700/80 rounded-2xl p-6 sm:p-8 shadow-2xl space-y-6 animate-slideDown" id="orbital-3d-visualizer">
       
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-slate-700/50 pb-3">
-        <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-blue-500/10 text-blue-400 rounded-lg">
-            <Rotate3d className="w-4.5 h-4.5 text-blue-400" />
+      <div className="flex items-center justify-between border-b border-slate-700/50 pb-4">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-blue-500/10 text-blue-400 rounded-xl">
+            <Rotate3d className="w-5 h-5 text-blue-400" />
           </div>
           <div>
-            <h3 className="text-xs font-bold text-slate-100 uppercase tracking-widest flex items-center gap-1.5">
+            <h3 className="text-sm font-bold text-slate-100 uppercase tracking-widest flex items-center gap-2">
               {lang === "FR" ? "Topologie Céleste 3D" : "3D Celestial Topology"}
-              <span className="text-[9px] font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded animate-pulse">LIVE</span>
+              <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full animate-pulse font-extrabold">LIVE</span>
             </h3>
-            <p className="text-[10px] text-slate-400">{lang === "FR" ? "Représentation multidimensionnelle des numéros en orbite stochastique" : "Multidimensional representation of stochastic number constellations"}</p>
+            <p className="text-xs text-slate-400">{lang === "FR" ? "Représentation multidimensionnelle des numéros en orbite stochastique" : "Multidimensional representation of stochastic number constellations"}</p>
           </div>
         </div>
-        <Compass className="w-4.5 h-4.5 text-slate-500 hover:text-blue-400 cursor-pointer transition-colors" />
+        <Compass className="w-5 h-5 text-slate-500 hover:text-blue-400 cursor-pointer transition-colors" />
       </div>
 
-      <div className="flex flex-col md:flex-row items-center justify-center gap-6">
+      <div className="flex flex-col items-center justify-center space-y-6">
         
-        {/* Sphere Container */}
-        <div className="relative overflow-hidden flex justify-center items-center">
+        {/* Sphere Container - Aéré et plus grand */}
+        <div className="relative overflow-hidden flex justify-center items-center p-4 bg-slate-950/40 rounded-2xl border border-slate-850 w-full max-w-[460px]">
           <canvas
             ref={canvasRef}
             onMouseMove={handleMouseMove}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className="cursor-grab active:cursor-grabbing rounded-xl select-none"
-            style={{ width: "240px", height: "240px" }}
+            className="cursor-grab active:cursor-grabbing rounded-xl select-none max-w-full w-[310px] h-[310px] sm:w-[380px] sm:h-[380px]"
           />
         </div>
 
-        {/* Dynamic description of the constellation path */}
-        <div className="flex-1 space-y-3 font-mono text-[11px] leading-relaxed text-slate-350 bg-slate-950/40 border border-slate-800 p-3.5 rounded-xl max-w-sm">
-          <div className="flex items-center gap-1 text-[10px] uppercase font-bold text-blue-400 border-b border-slate-850 pb-1.5">
-            <Star className="w-3 h-3 text-amber-400 fill-amber-450 animate-pulse" />
+        {/* Dynamic description of the constellation path - STRICTLY UNDERNEATH & SPACIOUS */}
+        <div className="w-full font-mono text-xs leading-relaxed text-slate-300 bg-slate-950/60 border border-slate-800 p-5 rounded-2xl space-y-4">
+          <div className="flex items-center gap-2 text-xs uppercase font-extrabold text-blue-400 border-b border-slate-850 pb-2.5">
+            <Star className="w-4 h-4 text-amber-400 fill-amber-400 animate-pulse" />
             <span>{lang === "FR" ? "Analyse de la Trajectoire Active" : "Active Trajectory Vector"}</span>
           </div>
           {lastCombinaison ? (
-            <div className="space-y-2">
-              <div>
-                <span className="text-slate-400">{lang === "FR" ? "Nœuds de Constellation : " : "Constellation Nodes: "}</span>
-                <span className="text-emerald-400 font-bold">{lastCombinaison.numeros.join(" ➔ ")}</span>
+            <div className="space-y-3">
+              <div className="bg-slate-900/80 p-3 rounded-lg border border-slate-800 flex flex-wrap gap-2 items-center">
+                <span className="text-slate-450">{lang === "FR" ? "Nœuds de Constellation : " : "Constellation Nodes: "}</span>
+                <span className="text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded text-sm tracking-wide">
+                  {lastCombinaison.numeros.join(" ➔ ")}
+                </span>
               </div>
-              <div className="text-[10px] text-slate-450 space-y-1">
-                <p>➔ {lang === "FR" ? "Les arêtes connectent les séquences ordonnées sous forme de tenseur stochastique fermé." : "Edges map sequential patterns into a closed stochastic projection loop."}</p>
-                <p>➔ {lang === "FR" ? "Survolez le cadran pour orienter la sphère selon les degrés d'attraction." : "Hover the viewer to align vector gravity field projection directions."}</p>
+              <div className="text-xs text-slate-400 space-y-2 pl-1">
+                <p className="flex items-start gap-2">
+                  <span className="text-blue-500 shrink-0">➔</span>
+                  <span>{lang === "FR" ? "Les arêtes virtuelles tracées en temps réel relient nos points d'attraction dans l'espace multidimensionnel." : "Virtual edges mapped in real-time tie nodes within space."}</span>
+                </p>
+                <p className="flex items-start gap-2">
+                  <span className="text-blue-500 shrink-0">➔</span>
+                  <span>{lang === "FR" ? "La taille de chaque nœud orbital est corrélée à sa fréquence de sortie historique pour symboliser sa masse de gravité." : "The size of each orbital node is mathematically correlated to its historical draw frequency to represent its gravity mass."}</span>
+                </p>
+                <p className="flex items-start gap-2">
+                  <span className="text-blue-500 shrink-0">➔</span>
+                  <span>{lang === "FR" ? "Glissez votre curseur ou déplacez votre doigt sur le cadran céleste pour faire tourner et réorienter la trajectoire." : "Hover your cursor or drag your finger across the celestial viewer to rotate and reorient the path angle."}</span>
+                </p>
               </div>
             </div>
           ) : (

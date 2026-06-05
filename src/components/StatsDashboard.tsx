@@ -7,10 +7,8 @@ import React, { useMemo } from "react";
 import { useSimulateurStore } from "../store/useSimulateurStore";
 import { TRANSLATIONS } from "../utils/translations";
 import { Flame, Snowflake, Hash, Award, BarChart3, TrendingUp } from "lucide-react";
-import Expert3DOrbitCanvas from "./Expert3DOrbitCanvas";
-
 export default function StatsDashboard() {
-  const { statistiques, tirages, lang, modeExpert } = useSimulateurStore();
+  const { statistiques, tirages, lang } = useSimulateurStore();
   const t = TRANSLATIONS[lang];
 
   // Top 5 Numéros Chauds (triés par fréquence décroissante)
@@ -279,13 +277,6 @@ export default function StatsDashboard() {
 
         </div>
       </div>
-
-      {/* Rendu dynamique de l'orbite 3D stochastique céleste en Mode Expert */}
-      {modeExpert && (
-        <div className="pt-2">
-          <Expert3DOrbitCanvas />
-        </div>
-      )}
     </div>
   );
 }

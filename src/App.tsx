@@ -38,7 +38,6 @@ export default function App() {
           <div className="flex items-center gap-3">
             <div className="relative flex items-center justify-center w-11 h-11 rounded-xl bg-gradient-to-tr from-blue-600 to-blue-500 shadow-md shadow-blue-600/20">
               <span className="text-white font-black text-xl tracking-tighter select-none">€</span>
-              <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-amber-400 rounded-full animate-ping" />
             </div>
             <div>
               <div className="flex items-center gap-2">
