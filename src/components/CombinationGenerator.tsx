@@ -7,9 +7,10 @@ import React, { useState } from "react";
 import { useSimulateurStore } from "../store/useSimulateurStore";
 import { TRANSLATIONS } from "../utils/translations";
 import { motion, AnimatePresence } from "motion/react";
-import { Sliders, Sparkles, Cpu, ChevronDown, ChevronUp, RefreshCw, BarChart2, Star, CloudLightning, Check, AlertCircle } from "lucide-react";
+import { Sliders, Sparkles, Cpu, ChevronDown, ChevronUp, RefreshCw, BarChart2, Star, CloudLightning, Check, AlertCircle, Heart } from "lucide-react";
 import MathVortexAnimation from "./MathVortexAnimation";
 import Expert3DOrbitCanvas from "./Expert3DOrbitCanvas";
+import EvaluerNumerosFetiches from "./EvaluerNumerosFetiches";
 
 export default function CombinationGenerator() {
   const { 
@@ -29,6 +30,7 @@ export default function CombinationGenerator() {
   const [showExplanation, setShowExplanation] = useState<boolean>(false);
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
+  const [isEvaluatorOpen, setIsEvaluatorOpen] = useState<boolean>(false);
   
   const t = TRANSLATIONS[lang];
 
@@ -344,7 +346,7 @@ export default function CombinationGenerator() {
       </div>
 
       {/* Bouton d'action central */}
-      <div className="text-center pt-2">
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
         <button
           onClick={handleGenerate}
           disabled={isGenerating}
@@ -362,6 +364,15 @@ export default function CombinationGenerator() {
               <span>{t.generateBtn}</span>
             </>
           )}
+        </button>
+
+        <button
+          onClick={() => setIsEvaluatorOpen(true)}
+          className="inline-flex items-center justify-center gap-2.5 bg-slate-900 border border-slate-700/80 hover:border-slate-600 hover:bg-slate-800 text-slate-200 font-bold py-3.5 px-6 rounded-xl transition-all active:scale-[0.98] cursor-pointer text-xs uppercase tracking-wide w-full sm:w-auto"
+          id="btn-evaluate-fetiches"
+        >
+          <Heart className="w-4 h-4 text-pink-500 fill-pink-500/10" />
+          <span>{lang === "FR" ? "Évaluer mes numéros fétiches" : "Evaluate favorite numbers"}</span>
         </button>
       </div>
 
@@ -520,6 +531,9 @@ export default function CombinationGenerator() {
           <MathVortexAnimation onComplete={handleAnimationComplete} />
         )}
       </AnimatePresence>
+
+      {/* Modale d'évaluation des numéros fétiches de l'utilisateur */}
+      <EvaluerNumerosFetiches isOpen={isEvaluatorOpen} onClose={() => setIsEvaluatorOpen(false)} />
 
     </div>
   );
