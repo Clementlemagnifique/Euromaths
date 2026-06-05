@@ -1,23 +1,35 @@
 # EuroMaths 🌀 — Simulateur Prédictif EuroMillions & Modélisation Stochastique
 
+🔗 **Site Web de Démo :** [https://euromaths.vercel.app/](https://euromaths.vercel.app/)
+
 EuroMaths est un outil d'aide à la décision mathématique de niveau industriel dédié à la modélisation et à l'analyse probabiliste des tirages de l'EuroMillions. Utilisant des calculs d'affinité matricielle et une distribution stochastique corrigée, l'application s'affranchit des générateurs pseudo-aléatoires uniformes conventionnels pour proposer des combinaisons optimisées fondées sur l'historique officiel certifié de la FDJ (2016 - 2026).
 
 ---
 
 ## 🚀 Fonctionnalités Majeures
 
-- **Modélisation Stochastique Avancée** : Prise en compte du poids combiné de fréquence de sortie et d'écart pour chaque numéro.
-- **Matrice de Co-occurrence 50x50** : Simulation dynamique des affinités de paires d'après les tirages passés. Chaque numéro généré adapte instantanément le poids des autres candidats.
-- **Vortex Mathématique 3D** : Animation immersive simulant en temps réel la convergence matricielle, les calculs d'entropie probabiliste et l'analyse quantique Monte Carlo.
-- **Filtre Chronologique Avancé** : Calendrier intelligent exclusif affichant précisément les jours contenant des tirages enregistrés réels (jours vides grisés / jours de tirages actifs en émeraude).
-- **Navigation Temporelle Fluide** : Recherche instantanée de date avec affichage contextuel des tirages voisins et chargement progressif (*lazy-loading*) performant.
-- **Souveraineté des Données** : Exécution 100% côté client sans fuite de données privées.
+- **Modelles de Rigueur Temporelle (Mode Expert)** : Activez des curseurs stochastiques d'entropie (bruit), de température stabilisante, et de pénalités de distance consécutive pour affiner le filtrage bayésien.
+- **Matrice de Co-occurrence Interactive 50x50** : Simulation dynamique des affinités de paires d'après les tirages passés. Alterne en temps réel entre le graphique traditionnel des complices et un rendu de matrice heatmap 50x50 ultra-performant dessiné par Canvas.
+- **Topologie Céleste Orbitale 3D** : Représentation tridimensionnelle interactive (projection de Fibonacci en perspective rotative sur Canvas) des 50 numéros où les sphères sont proportionnelles aux fréquences passées et dessinant le polygone vectoriel de la constellation de la combinaison simulée.
+- **API Publique Full-Stack** : Intègre un serveur d'API Express capable de générer des combinaisons, exposer la matrice, simuler des backtests historiques et servir le jeu complet de tirages réels d'époque.
+
+---
+
+## 🔌 API Publique (Endpoints Express)
+
+Le moteur probabiliste d'EuroMaths est exposé publiquement via des endpoints REST standard :
+
+1. **`GET /api/history`** : Renvoie le jeu complet de données chronologiques d'EuroMillions de 2016 à aujourd'hui au format JSON.
+2. **`GET /api/cooccurrence[?selected=X]`** : Retourne la table complète des coefficients de co-occurrences conjointe ou filtre les meilleurs partenaires pour le numéro `X` spécifié.
+3. **`GET / POST /api/generate`** : Génère une grille intelligente optimale. Paramètres acceptés en corps de requête/requête : `weightFrequence`, `weightEcart`, `coOccurrenceBonus`, `entropyNoise`, `distancePenalty`, `temperatureScale`.
+4. **`POST /api/backtest`** : Exécute une simulation croisée sur les `nbDrawsToTest` derniers tirages passés de manière intègre (comparaison simultanée du modèle customisé vs Hasard Pur uniforme).
 
 ---
 
 ## 🛠️ Stack Technique
 
-- **Framework principal** : React 18+ (avec Vite.js pour des temps de compilation optimisés)
+- **Framework principal** : React 18+ orchestré sous un serveur full-stack Express + Middleware Vite
+- **Compilateur Backend & Bundler** : `esbuild` & `tsx` pour empaqueter un serveur CommonJS `dist/server.cjs` léger
 - **Langage** : TypeScript Typé Strictement (Rigueur Typée sans contournement `any`)
 - **Moteur d'Animation** : Framer Motion (`motion/react`) pour les transitions d'époque de grille et le vortex 3D stochastique
 - **Librairie Iconographique** : `lucide-react`

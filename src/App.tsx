@@ -49,7 +49,7 @@ export default function App() {
                   {t.engineTitle}
                 </span>
               </div>
-              <p className="text-xs text-slate-400">{t.headerSlogan}</p>
+              <p className="text-[10px] sm:text-xs text-slate-400 leading-snug max-w-[240px] sm:max-w-none">{t.headerSlogan}</p>
             </div>
           </div>
 

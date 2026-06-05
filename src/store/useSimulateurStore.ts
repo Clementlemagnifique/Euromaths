@@ -21,6 +21,7 @@ interface SimulateurStore {
   syncError: string | null;
   syncSuccess: boolean;
   lang: Language;
+  modeExpert: boolean;
   
   // Actions
   ajouterTirage: (tirage: Omit<Tirage, "id">) => void;
@@ -30,6 +31,7 @@ interface SimulateurStore {
   genererSéquenceOptimale: () => void;
   synchroniserDerniersTirages: () => Promise<void>;
   setLang: (lang: Language) => void;
+  setModeExpert: (modeExpert: boolean) => void;
 }
 
 export const useSimulateurStore = create<SimulateurStore>((set, get) => {
@@ -43,15 +45,23 @@ export const useSimulateurStore = create<SimulateurStore>((set, get) => {
     config: {
       weightFrequence: 0.5,
       weightEcart: 0.5,
-      coOccurrenceBonus: 0.6 // 60% de bonus par défaut pour la co-occurrence
+      coOccurrenceBonus: 0.6, // 60% de bonus par défaut pour la co-occurrence
+      entropyNoise: 0.15,
+      distancePenalty: 0.20,
+      temperatureScale: 0.50
     },
     isSynchronizing: false,
     syncError: null,
     syncSuccess: false,
     lang: "FR",
+    modeExpert: false,
 
     setLang: (lang: Language) => {
       set({ lang });
+    },
+
+    setModeExpert: (modeExpert: boolean) => {
+      set({ modeExpert });
     },
 
     ajouterTirage: (nouveauTirage) => {

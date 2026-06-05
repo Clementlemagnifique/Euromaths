@@ -18,6 +18,20 @@ export default function MarketingModal() {
   const { lang } = useSimulateurStore();
   const t = TRANSLATIONS[lang];
 
+  const ethicalTitleTrans: Record<string, string> = {
+    FR: "Souveraineté & Intégrité Scientifique",
+    EN: "Sovereignty & Scientific Integrity",
+    ES: "Soberanía e Integridad Científica",
+    PT: "Soberania e Integridade Científica"
+  };
+
+  const dontShowAgainTrans: Record<string, string> = {
+    FR: "Ne plus afficher au démarrage",
+    EN: "Do not show again on startup",
+    ES: "No volver a mostrar al inicio",
+    PT: "Não mostrar novamente ao iniciar"
+  };
+
   useEffect(() => {
     // Vérifier si l'utilisateur a désactivé le popup d'accueil
     const isDismissed = localStorage.getItem("euromaths_dismiss_marketing") === "true";
@@ -108,7 +122,7 @@ export default function MarketingModal() {
             <div className="bg-gradient-to-r from-slate-950/60 via-slate-900 to-slate-950/40 border border-slate-800 rounded-2xl p-4 space-y-2.5" id="algo-ethical-banner">
               <h3 className="text-xs font-bold text-slate-200 flex items-center gap-1.5 font-mono uppercase tracking-wide">
                 <CheckCircle className="w-4 h-4 text-emerald-400" />
-                Sovereignty &amp; Scientific Integrity
+                {ethicalTitleTrans[lang] || ethicalTitleTrans.EN}
               </h3>
               <p className="text-[11px] text-slate-400 leading-relaxed font-sans">
                 {t.welcomeConceptDesc}
@@ -126,7 +140,7 @@ export default function MarketingModal() {
                   className="w-3.5 h-3.5 accent-blue-500 rounded border-slate-700 bg-slate-900"
                   id="dont-show-again-checkbox"
                 />
-                Do not show again on startup
+                {dontShowAgainTrans[lang] || dontShowAgainTrans.EN}
               </label>
 
               <button

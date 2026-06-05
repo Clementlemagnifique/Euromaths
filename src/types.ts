@@ -30,6 +30,9 @@ export interface WeightsConfig {
   weightFrequence: number; // Coefficient de poids pour la fréquence (0 à 1)
   weightEcart: number; // Coefficient de poids pour l'écart (0 à 1)
   coOccurrenceBonus: number; // Coefficient de bonus pour la co-occurrence (e.g. 1.5 pour multiplier les chances du partenaire favori)
+  entropyNoise?: number; // Inertie stochastique / bruit aléatoire (0 à 1)
+  distancePenalty?: number; // Pénalité d'adjacence ou proximité (0 à 1)
+  temperatureScale?: number; // Calibration d'entropie (0 à 1)
 }
 
 export interface CombinaisonGeneree {

@@ -20,7 +20,9 @@ export default function CombinationGenerator() {
     syncError,
     syncSuccess,
     synchroniserDerniersTirages,
-    lang
+    lang,
+    modeExpert,
+    setModeExpert
   } = useSimulateurStore();
   
   const [showExplanation, setShowExplanation] = useState<boolean>(false);
@@ -61,7 +63,28 @@ export default function CombinationGenerator() {
           </div>
         </div>
 
-        <div className="flex gap-2 self-stretch sm:self-auto justify-end">
+        <div className="flex gap-2 self-stretch sm:self-auto justify-end flex-wrap">
+          {/* Toggle MODE EXPERT */}
+          <button
+            onClick={() => {
+              const nextVal = !modeExpert;
+              setModeExpert(nextVal);
+              if (nextVal) {
+                // Ouvrir automatiquement les paramètres avancés pour que l'UX soit directe !
+                setIsSettingsOpen(true);
+              }
+            }}
+            className={`text-xs font-mono flex items-center gap-1.5 px-3 py-1.5 rounded-lg border transition-all cursor-pointer ${
+              modeExpert
+                ? "bg-blue-600 font-extrabold text-white border-blue-500 shadow-md shadow-blue-500/20"
+                : "bg-slate-900/80 text-slate-400 border-slate-700 hover:border-slate-600 hover:text-slate-200"
+            }`}
+            title="Toggle Expert Mode"
+          >
+            <Cpu className={`w-3.5 h-3.5 ${modeExpert ? "animate-pulse text-amber-400" : ""}`} />
+            <span>{lang === "FR" ? "Mode Expert" : lang === "EN" ? "Expert Mode" : lang === "ES" ? "Modo Experto" : "Modo Expert"}</span>
+          </button>
+
           {/* Bouton de Synchronisation API */}
           <button
             onClick={synchroniserDerniersTirages}
@@ -79,7 +102,14 @@ export default function CombinationGenerator() {
 
           <button
             onClick={() => {
-              modifierConfig({ weightFrequence: 0.5, weightEcart: 0.5, coOccurrenceBonus: 0.6 });
+              modifierConfig({ 
+                weightFrequence: 0.5, 
+                weightEcart: 0.5, 
+                coOccurrenceBonus: 0.6,
+                entropyNoise: 0.15,
+                distancePenalty: 0.20,
+                temperatureScale: 0.50
+              });
             }}
             className="text-xs font-mono flex items-center gap-1 text-slate-450 hover:text-blue-400 bg-slate-900/80 px-2.5 py-1.5 rounded-lg border border-slate-750 transition-all hover:border-slate-600 cursor-pointer"
           >
@@ -206,10 +236,101 @@ export default function CombinationGenerator() {
 
             </div>
 
+            {/* Paramètres EXPERT supplémentaires */}
+            {modeExpert && (
+              <div className="border-t border-slate-700/40 pt-4 space-y-4 animate-fadeIn" id="expert-stochastic-panel">
+                <div className="flex items-center gap-1.5 text-blue-400 font-mono text-[11px] font-bold uppercase tracking-widest">
+                  <Cpu className="w-3.5 h-3.5 text-blue-400 animate-spin" style={{ animationDuration: '4s' }} />
+                  <span>{lang === "FR" ? "Paramètres Avancés Stochastiques" : "Advanced Stochastic Parameters"}</span>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  
+                  {/* Calibration d'Entropie */}
+                  <div className="space-y-2.5 bg-slate-900/45 p-4 border border-blue-500/10 rounded-xl">
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="font-semibold text-slate-300 flex items-center gap-1">
+                        🎯 {lang === "FR" ? "Indice de Température / Calibrage" : lang === "EN" ? "Entropy Calibration" : "Calibración de Entropía"}
+                      </span>
+                      <span className="font-mono bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded text-[11px] font-bold">
+                        {config.temperatureScale !== undefined ? config.temperatureScale.toFixed(2) : "0.50"}
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-slate-400 leading-relaxed">
+                      {lang === "FR" ? "Proche de 0 concentre la sélection sur les favoris récents, proche de 1 distribue la probabilité équitablement."
+                       : lang === "EN" ? "Close to 0 focuses on heavy favorites; close to 1 flattens probability curve."
+                       : "Cerca de 0 concentra en favoritos; cerca de 1 aplasta el perfil de probabilidad."}
+                    </p>
+                    <input
+                      type="range"
+                      min="0.1"
+                      max="1.0"
+                      step="0.05"
+                      value={config.temperatureScale !== undefined ? config.temperatureScale : 0.50}
+                      onChange={(e) => modifierConfig({ temperatureScale: parseFloat(e.target.value) })}
+                      className="w-full h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                    />
+                  </div>
+
+                  {/* Bruit Micro-stochastique */}
+                  <div className="space-y-2.5 bg-slate-900/45 p-4 border border-blue-500/10 rounded-xl">
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="font-semibold text-slate-300 flex items-center gap-1">
+                        🌀 {lang === "FR" ? "Bruit Micro-stochastique" : lang === "EN" ? "Stochastic Noise" : "Ruido Estocástico"}
+                      </span>
+                      <span className="font-mono bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded text-[11px] font-bold">
+                        {config.entropyNoise !== undefined ? `${(config.entropyNoise * 100).toFixed(0)}%` : "15%"}
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-slate-400 leading-relaxed">
+                      {lang === "FR" ? "Limite la rigidité du tirage en ajoutant de petites fluctuations thermiques aléatoires aux poids."
+                       : lang === "EN" ? "Prevents hard bias by feeding microscopic thermal volatility directly into computation weights."
+                       : "Impide sesgo duro inyectando volatilidad térmica microscópica en los pesos."}
+                    </p>
+                    <input
+                      type="range"
+                      min="0.0"
+                      max="0.5"
+                      step="0.05"
+                      value={config.entropyNoise !== undefined ? config.entropyNoise : 0.15}
+                      onChange={(e) => modifierConfig({ entropyNoise: parseFloat(e.target.value) })}
+                      className="w-full h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                    />
+                  </div>
+
+                  {/* Pénalité de Proximité Adjacente */}
+                  <div className="space-y-2.5 bg-slate-900/45 p-4 border border-blue-500/10 rounded-xl">
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="font-semibold text-slate-300 flex items-center gap-1">
+                        🛡 {lang === "FR" ? "Pénalité de Proximité" : lang === "EN" ? "Adjacency Penalty" : "Penalización Vecina"}
+                      </span>
+                      <span className="font-mono bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded text-[11px] font-bold">
+                        {config.distancePenalty !== undefined ? `${(config.distancePenalty * 100).toFixed(0)}%` : "20%"}
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-slate-400 leading-relaxed">
+                      {lang === "FR" ? "Décourage l'apparition de numéros adjacents (ex: évite de tirer 14 et 15 ensemble) pour garder le tri espacé."
+                       : lang === "EN" ? "Dampens weights of consecutive neighbors (like 14 and 15 side-by-side) to ensure realistic draw gaps."
+                       : "Reduce los pesos de vecinos consecutivos (ej. evita 14 y 15 juntos) para asegurar un espaciado realista."}
+                    </p>
+                    <input
+                      type="range"
+                      min="0.0"
+                      max="0.8"
+                      step="0.05"
+                      value={config.distancePenalty !== undefined ? config.distancePenalty : 0.20}
+                      onChange={(e) => modifierConfig({ distancePenalty: parseFloat(e.target.value) })}
+                      className="w-full h-1 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                    />
+                  </div>
+
+                </div>
+              </div>
+            )}
+
             {/* Paramètres additionnels de la charte de qualité */}
             <div className="bg-slate-900/20 p-4 border border-slate-700/50 rounded-xl flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center text-xs text-slate-400">
               <div>
-                <span className="font-bold text-slate-300 block mb-0.5">⚙️ Parameters</span>
+                <span className="font-bold text-slate-300 block mb-0.5">⚙️ Parameters {modeExpert && <span className="text-blue-400 font-mono font-black text-[10px] ml-1 bg-blue-500/10 border border-blue-500/25 px-1.5 py-0.5 rounded">EXPERT ACTIVE</span>}</span>
                 <p className="text-[11px] text-slate-450">Advanced stochastic constraints.</p>
               </div>
               <div className="flex gap-4 shrink-0 font-mono text-[11px]">

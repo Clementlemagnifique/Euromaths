@@ -202,9 +202,24 @@ export function genererCombinaisonIntelligente(
     const eNorm = ecartNumerosNorm[n] !== undefined ? ecartNumerosNorm[n] : 0.5;
 
     // Formule combinée : d'autant plus de poids que le curseur est élevé sur la statistique
-    const poids = config.weightFrequence * fNorm + config.weightEcart * eNorm + 0.1; // 0.1 de poids plancher
-    poidsNumeros[n] = poids;
-    poidsInitiauxExplication[n] = Math.round(poids * 100) / 100; // Garder une version arrondie pour l'UI
+    const poidsBase = config.weightFrequence * fNorm + config.weightEcart * eNorm + 0.1; // 0.1 de poids plancher
+    
+    // Application de la calibration de température (si présente)
+    let poidsAjuste = poidsBase;
+    if (config.temperatureScale !== undefined) {
+      const exp = 1.6 - config.temperatureScale * 1.2; // donne un exposant d'ajustement fluide
+      poidsAjuste = Math.pow(poidsBase, exp);
+    }
+
+    // Application du bruit stochastique d'inertie (si présent)
+    if (config.entropyNoise !== undefined && config.entropyNoise > 0) {
+      const randFactor = 1.0 + (Math.random() - 0.5) * config.entropyNoise;
+      poidsAjuste = poidsAjuste * randFactor;
+    }
+
+    const poidsFinal = Math.max(0.01, poidsAjuste);
+    poidsNumeros[n] = poidsFinal;
+    poidsInitiauxExplication[n] = Math.round(poidsFinal * 100) / 100; // Garder une version arrondie pour l'UI
   }
 
   // 4. Tirage des 5 numéros l'un après l'autre avec mise à jour dynamique des poids (Co-occurrence)
@@ -230,6 +245,16 @@ export function genererCombinaisonIntelligente(
     
     numerosTirés.push(selection);
     logsAnalyse.push(`Tirage #${etapeNum} : Numéro ${selection} sélectionné.`);
+
+    // Appliquer une pénalité de proximité (distance) pour limiter les séquences successives trop rapprochées
+    if (config.distancePenalty !== undefined && config.distancePenalty > 0) {
+      numerosDisponibles.forEach((candidat) => {
+        if (Math.abs(candidat - selection) === 1) {
+          const poidsPrecedent = poidsNumeros[candidat] || 0.1;
+          poidsNumeros[candidat] = poidsPrecedent * (1.0 - config.distancePenalty * 0.75);
+        }
+      });
+    }
 
     // Si on a d'autres numéros à tirer, appliquer le bonus de co-occurrence de ce numéro sur les restants
     if (numerosTirés.length < 5) {
