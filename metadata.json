@@ -1,0 +1,6 @@
+{
+  "name": "Générateur Statistique EuroMillions",
+  "description": "Un dashboard d'analyse statistique et de génération pondérée de combinaisons pour l'EuroMillions basé sur l'historique et des matrices de co-occurrence.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
